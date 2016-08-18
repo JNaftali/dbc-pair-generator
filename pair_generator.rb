@@ -1,27 +1,45 @@
-module PairGenerator
-  def self.find_new_pairs(history)
-    people = history.flatten.uniq
+class PairGenerator
+  def initialize(array)
+    if array.any? {|el| el.is_a?(Array)}
+      @history = array
+    else
+      @people = array
+    end
+    @history ||= []
+    @people += @history.flatten.uniq
+  end
+
+  def find_new_pairs
     possible_pairs = people.combination(2).to_a - history
 
     get_pairs(people, possible_pairs)
   end
 
   private
-  def self.get_pairs(people, possible_pairs)
-    # binding.pry
+  def permitted_pairs
+    @people.permutation(2).to_a - history
+  end
+
+  def get_pairs(people, possible_pairs)
     return [] if people.length == 0
     return [people] if people.length == 1
-    possible_pairs.each do |pair_candidate|
-      safe_possible_pairs = possible_pairs.dup
-      safe_people = people.dup - pair_candidate
-      remaining_pairs = safe_possible_pairs.delete_if {|pair| pair.include?(pair_candidate[0]) || pair.include?(pair_candidate[1])}
-      if safe_people.all? {|person| remaining_pairs.flatten.include?(person)}
-        if other_pairs = get_pairs(safe_people, remaining_pairs)
-          # binding.pry
-          return other_pairs + [pair_candidate]
-        end
-      end
-    end
-    false
+    return false unless people.all? {|person| possible_pairs.flatten.include?(person)}
   end
 end
+
+class Pair
+  attr_reader :people
+  include Comparable
+
+  def initialize(array)
+    @people = array
+  end
+
+  def ==(other)
+    self.people.sort == other.people.sort
+  end
+end
+
+# past_pairs = [[:jon, :melissa], [:josh, :shawn], [:anders, :terrance], [:ephraim, :kiren], [:jon, :amanda], [:anders, :shawn], [:josh, :terrance], [:melissa, :kiren], [:amanda, :neel], [:edwin, :jon], [:ephraim, :shawn], [:henri, :rachel], [:josh, :melissa], [:terrance, :kiren], [:amanda, :ephraim], [:anders, :rachel], [:daniel, :josh], [:neel, :terrance], [:moin, :melissa]]
+
+# p PairGenerator.find_new_pairs(past_pairs)
