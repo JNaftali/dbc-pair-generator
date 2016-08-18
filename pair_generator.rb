@@ -1,4 +1,5 @@
 class PairGenerator
+  attr_reader :people, :history
   def initialize(array)
     if array.any? {|el| el.is_a?(Array)}
       @history = array
@@ -6,21 +7,20 @@ class PairGenerator
       @people = array
     end
     @history ||= []
+    @people ||= []
     @people += @history.flatten.uniq
+    @history.map! {|pair| Pair.new(pair)}
   end
 
-  def find_new_pairs
-    possible_pairs = people.combination(2).to_a - history
-
-    get_pairs(people, possible_pairs)
+  def possible_pairs
+    @people.combination(2).to_a.map{|p| Pair.new(p)}
   end
 
-  private
   def permitted_pairs
-    @people.permutation(2).to_a - history
+    self.possible_pairs.reject { |pair| @history.any?{ |past_pair| pair == past_pair}}
   end
 
-  def get_pairs(people, possible_pairs)
+  def get_pairs
     return [] if people.length == 0
     return [people] if people.length == 1
     return false unless people.all? {|person| possible_pairs.flatten.include?(person)}
@@ -35,8 +35,12 @@ class Pair
     @people = array
   end
 
-  def ==(other)
-    self.people.sort == other.people.sort
+  def <=>(other)
+    self.people.sort <=> other.people.sort
+  end
+
+  def include?(thing)
+    self.people.include?(thing)
   end
 end
 
