@@ -5,9 +5,10 @@ class PairGenerator
     @people = args.fetch(:people, []) | @history.flatten
   end
 
-  
+
 
   def valid?
+    return true if self.people.length == 1
     self.people.all? { |person| self.permitted_pairs.flatten.include?(person) }
   end
 
