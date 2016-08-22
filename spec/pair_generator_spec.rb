@@ -1,7 +1,7 @@
-require_relative '../pair_generator_2'
+require_relative '../pair_generator'
 
 describe PairGenerator do
-  let(:short)  {PairGenerator.new(history: [[:jon, :melissa], [:josh, :shawn]])}
+  let(:short)  {PairGenerator.new(history: [[:jon, :melissa], [:josh, :shawn], [:jon, :josh], [:melissa, :shawn]])}
   let(:medium) {PairGenerator.new(history: [[:jon, :melissa], [:josh, :shawn], [:anders, :terrance], [:jon, :josh], [:melissa, :anders], [:shawn, :terrance]])}
   let(:long)   {PairGenerator.new(history: [[:jon, :melissa], [:josh, :shawn], [:anders, :terrance], [:ephraim, :kiren], [:jon, :amanda], [:anders, :shawn], [:josh, :terrance], [:melissa, :kiren], [:amanda, :neel], [:edwin, :jon], [:ephraim, :shawn], [:henri, :rachel], [:josh, :melissa], [:terrance, :kiren], [:amanda, :ephraim], [:anders, :rachel], [:daniel, :josh], [:neel, :terrance], [:moin, :melissa]])}
   let(:invalid) {PairGenerator.new(history: [[:jon, :melissa], [:jon, :josh]])}
@@ -28,6 +28,15 @@ describe PairGenerator do
       expect(short.permitted_pairs & short.history).to eq([])
       expect(medium.permitted_pairs & medium.history).to eq([])
       expect(long.permitted_pairs & long.history).to eq([])
+    end
+  end
+
+  describe "#next_set_of_pairs" do
+    it "if there's only one person, return that person alone" do
+      expect(PairGenerator.new(people: [:josh]).next_set_of_pairs).to eq ([[:josh]])
+    end
+    it "can find the only solution when there is only one" do
+      expect(short.next_set_of_pairs.sort).to eq([[:jon, :shawn], [:josh, :melissa]])
     end
   end
 end
