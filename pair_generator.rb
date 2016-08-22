@@ -6,13 +6,18 @@ class PairGenerator
   end
 
   def next_set_of_pairs
-    return [self.people.sort] if self.people.length <= 2 || 
+    if self.people.length == 1
+      return false if self.history.include?(self.people)
+      return [self.people]
+    end
+    return [self.people.sort] if self.people.length == 2
     self.permitted_pairs.each do |next_pair|
       @next_pair = next_pair
       candidate = PairGenerator.new(history: self.next_history, people: self.next_people)
       next unless candidate.valid? && candidate.next_set_of_pairs
       return [@next_pair] + candidate.next_set_of_pairs
     end
+    false
   end
 
   def next_history
@@ -25,6 +30,7 @@ class PairGenerator
 
   def valid?
     return false if self.people.empty?
+    return true if self.people.length == 1
     self.people.all? { |person| self.permitted_pairs.flatten.include?(person) }
   end
 

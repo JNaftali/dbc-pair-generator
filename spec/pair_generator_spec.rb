@@ -35,8 +35,37 @@ describe PairGenerator do
     it "if there's only one person, return that person alone" do
       expect(PairGenerator.new(people: [:josh]).next_set_of_pairs).to eq ([[:josh]])
     end
+
     it "can find the only solution when there is only one" do
       expect(short.next_set_of_pairs.sort).to eq([[:jon, :shawn], [:josh, :melissa]])
+    end
+
+    it "will find valid solutions until there is none and then return false" do
+      generator = {people: [:josh, :jon, :melissa, :shawn]}
+      expect(next_set = PairGenerator.new(generator).next_set_of_pairs).to be_truthy
+      expect(next_set.length).to eq(next_set.uniq.length)
+      generator[:history] = next_set
+      expect(next_set = PairGenerator.new(generator).next_set_of_pairs).to be_truthy
+      expect(next_set.length).to eq(next_set.uniq.length)
+      generator[:history] += next_set
+      expect(next_set = PairGenerator.new(generator).next_set_of_pairs).to be_truthy
+      expect(next_set.length).to eq(next_set.uniq.length)
+      generator[:history] += next_set
+      expect(next_set = PairGenerator.new(generator).next_set_of_pairs).to be false
+    end
+
+    it "will work correctly given an odd number of people" do
+      generator = {people: [:josh, :jon, :melissa]}
+      expect(next_set = PairGenerator.new(generator).next_set_of_pairs).to be_truthy
+      expect(next_set.length).to eq(next_set.uniq.length)
+      generator[:history] = next_set
+      expect(next_set = PairGenerator.new(generator).next_set_of_pairs).to be_truthy
+      expect(next_set.length).to eq(next_set.uniq.length)
+      generator[:history] += next_set
+      expect(next_set = PairGenerator.new(generator).next_set_of_pairs).to be_truthy
+      expect(next_set.length).to eq(next_set.uniq.length)
+      generator[:history] += next_set
+      expect(next_set = PairGenerator.new(generator).next_set_of_pairs).to be false
     end
   end
 end
