@@ -5,7 +5,7 @@ class PairGenerator
     @people = args.fetch(:people, []) | @history.flatten
   end
 
-  def next_set_of_pairs
+  def next_set_of_pairs(add_to_history = false)
     if self.people.length == 1
       return false if self.history.include?(self.people)
       return [self.people]
@@ -14,8 +14,10 @@ class PairGenerator
     self.permitted_pairs.each do |next_pair|
       @next_pair = next_pair
       candidate = PairGenerator.new(history: self.next_history, people: self.next_people)
-      next unless candidate.valid? && candidate.next_set_of_pairs
-      return [@next_pair] + candidate.next_set_of_pairs
+      next unless candidate.valid? && (rest_of_pairs = candidate.next_set_of_pairs)
+      result = [@next_pair] + rest_of_pairs
+      self.history << result if add_to_history
+      return result
     end
     false
   end
