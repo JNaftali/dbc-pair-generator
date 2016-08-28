@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+require_relative 'pair_generator'
+require_relative 'parser.rb'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: runner.rb [-f path]"
+
+  opts.on("-f", "--filename PATH", "Specify PATH to the file with people and history. Looks in pairdata.txt by default.") do |f|
+    options[:filename] = f
+  end
+
+  opts.on("-u", "--update", "Updates the file with the generated pairs after running.") do
+    options[:update] = true
+  end
+
+  opts.on("-g", "--group_size SIZE", "Size of groups to generate. Not yet implemented") do |g|
+    options[:group_size] = g
+  end
+end.parse!
+
+options[:filename]   ||= "pairdata.txt"
+options[:save]       ||= false
+options[:group_size] ||= 2
+
+generator = PairParser.load_file(options[:filename])
+generator.next_set_of_pairs(options[:save]).each { |group| puts group.map(&:to_s).join(", ") }
+
+PairParser.save_file(options[:filename], generator)

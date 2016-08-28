@@ -1,5 +1,5 @@
 class PairGenerator
-  attr_reader :people, :history
+  attr_accessor :people, :history
   def initialize(args={})
     @history = args.fetch(:history, []).map(&:sort)
     @people = args.fetch(:people, []) | @history.flatten
@@ -16,7 +16,9 @@ class PairGenerator
       candidate = PairGenerator.new(history: self.next_history, people: self.next_people)
       next unless candidate.valid? && (rest_of_pairs = candidate.next_set_of_pairs)
       result = [@next_pair] + rest_of_pairs
-      self.history << result if add_to_history
+      if add_to_history
+        self.history += result
+      end
       return result
     end
     false

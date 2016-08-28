@@ -19,5 +19,5 @@ Kiren
 
 Adam, Jon
 Anders, Moin
-Daniel,Edwin, Elisa
+Daniel, Edwin, Elisa
 Henri, Matt
