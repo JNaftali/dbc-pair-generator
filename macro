@@ -1,3 +1,0 @@
-load 'cohort.rb'
-load 'group_generator.rb'
-cohort = Cohort.new(history: [[:josh, :elisa], [:margaret, :matt]], people: [ :elisa, :margaret, :matt, :josh, :terrance, :shawn, :rachel, :anders, :kiren], size: 4)
