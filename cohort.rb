@@ -4,7 +4,7 @@ class Cohort
     @history = args.fetch(:history) {[]}.map(&:sort)
     @people = args.fetch(:people) || @history.flatten
     @people.sort!
-    @size = args.fetch(:size, 2)
+    @size = args.fetch(:size, 2).to_i
   end
 
   def next_groups(save=true)
