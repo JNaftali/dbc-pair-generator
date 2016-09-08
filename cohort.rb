@@ -2,12 +2,12 @@ class Cohort
   attr_accessor :history, :people, :size
   def initialize(args={})
     @history = args.fetch(:history) {[]}.map(&:sort)
-    @people = args.fetch(:people) || @history.flatten
+    @people = args.fetch(:people) { @history.flatten.uniq }
     @people.sort!
     @size = args.fetch(:size, 2).to_i
   end
 
-  def next_groups(save=true)
+  def next_groups(save=false)
     return [self.people] if self.people.length <=
      self.size
     groups_enum.each do |group|
@@ -17,6 +17,7 @@ class Cohort
         size: self.size
       )
       result = [group] + new_cohort.next_groups if new_cohort.valid?
+      return false unless result
       self.history += result if save
       return result
     end
