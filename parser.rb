@@ -10,11 +10,11 @@ module PairParser
       history << next_group.chomp.split(/, ?/).map(&:to_sym)
     end
     file.close
-    PairGenerator.new({people: people, history: history})
+    {people: people, history: history}
   end
 
   def self.save_file(path, pairgen)
-    file = File.open(path, "w") do |f|
+    File.open(path, "w") do |f|
       pairgen.people.each { |person| f << person << "\n" }
       f << "\n"
       pairgen.history.each { |group| f << group.map(&:to_s).join(", ") << "\n" }

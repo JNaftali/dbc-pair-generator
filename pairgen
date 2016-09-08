@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
-require_relative 'pair_generator'
-require_relative 'parser.rb'
+require_relative 'cohort'
+require_relative 'parser'
+require_relative 'group_generator'
 require 'optparse'
 
 options = {}
@@ -21,10 +22,12 @@ OptionParser.new do |opts|
 end.parse!
 
 options[:filename]   ||= "pairdata.txt"
-options[:save]       ||= false
+options[:update]       ||= false
 options[:group_size] ||= 2
 
-generator = PairParser.load_file(options[:filename])
-generator.next_set_of_pairs(options[:save]).each { |group| puts group.map(&:to_s).join(", ") }
+args = PairParser.load_file(options[:filename])
+args[:size] = options[:group_size]
+generator = Cohort.new(args)
+generator.next_groups(options[:update]).each { |group| puts group.map(&:to_s).join(", ") }
 
 PairParser.save_file(options[:filename], generator)
