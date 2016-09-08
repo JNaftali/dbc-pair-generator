@@ -10,7 +10,7 @@ class Cohort
   def next_groups(save=true)
     return [self.people] if self.people.length <=
      self.size
-    GroupGen.get_groups(self).each do |group|
+    groups_enum.each do |group|
       new_cohort = Cohort.new(
         history: self.history,
         people: self.people - group,
@@ -32,5 +32,22 @@ class Cohort
     return self.history.count {|past_group| past_group.include?(group[0])} if group.length == 1
 
     group.sort.combination(2).reduce(0) { |sum, pair| sum + self.history.count {|past_group| past_group & pair == pair} }
+  end
+
+  def groups_enum
+    Enumerator.new do |y|
+      people  = self.people.dup
+      history = self.history.map(&:dup)
+
+      until people.empty?
+        next_group = []
+        until next_group.length == self.size || people.empty?
+          people = people.sort {|a,b| self.sort_rank(*next_group, a) <=> self.sort_rank(*next_group, b)}
+          next_group << people.find {|person| !next_group.include?(person)}
+        end
+        history << next_group
+        y << next_group
+      end
+    end
   end
 end
