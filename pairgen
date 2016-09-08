@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require_relative 'cohort'
 require_relative 'parser'
-require_relative 'group_generator'
 require 'optparse'
 
 options = {}
